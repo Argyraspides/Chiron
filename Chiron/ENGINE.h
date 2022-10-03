@@ -14,7 +14,7 @@ public:
 	void HST             (Polygon& p1, Polygon& p2);
 	void processCollision(Polygon& p1, Polygon& p2);
 
-	void run(std::vector<Polygon> polygons);
+	void run(std::vector<Polygon> &polygons);
 
 
 };

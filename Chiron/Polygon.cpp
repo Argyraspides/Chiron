@@ -1,9 +1,10 @@
 #include "Polygon.h"
 
-Polygon::Polygon(float &xInit, float &yInit, float &mass)
+Polygon::Polygon(float xInit, float yInit, float mass, std::vector<Vertex> &vertices)
 {
 	this->center = { xInit, yInit };
 	this->mass = mass;
+	this->vertices = vertices;
 }
 
 void Polygon::update()

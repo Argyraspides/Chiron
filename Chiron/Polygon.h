@@ -5,8 +5,7 @@
 class Polygon
 {
 public:
-	
-
+	 
 	Vertex center = { 0,0,0 };
 	Vertex vel = { 0,0,0 };
 
@@ -23,6 +22,6 @@ public:
 
 	void findCentroid(std::vector<Vertex> vertices);
 
-	Polygon(float &xInit, float &yInit, float &mass);
+	Polygon(float xInit, float yInit, float mass, std::vector<Vertex> &vertices);
 
 };
