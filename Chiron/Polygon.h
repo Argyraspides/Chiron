@@ -21,7 +21,8 @@ public:
 	void rotate();
 	void render();
 
-	Polygon(float &xInit, float &yInit, float &mass);
+	void findCentroid(std::vector<Vertex> vertices);
 
+	Polygon(float &xInit, float &yInit, float &mass);
 
 };

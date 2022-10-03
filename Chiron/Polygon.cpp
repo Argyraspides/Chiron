@@ -11,6 +11,7 @@ void Polygon::update()
 	this->center = this->center + vel;
 	rotate();
 }
+
 /*
 POLYGON::ROATATE()
 
@@ -25,6 +26,7 @@ POLYGON::ROATATE()
 		 then move all the points back with vertex += shape.position
 
 */
+
 void Polygon::rotate()
 {
 	for (Vertex &v : vertices)
@@ -54,3 +56,46 @@ void Polygon::render()
 	renderedShape.rotate(ang_vel * (180.0f / 3.14159265359));
 }
 
+void Polygon::findCentroid(std::vector<Vertex> vertices)
+{
+	float cx = 0, cy = 0;
+	float signedArea = 0;
+	Vertex center;
+	float x0 = 0; float y0 = 0;
+	float x1 = 0; float y1 = 0;
+	float incrementedSignedArea = 0;
+
+	int i = 0;
+	for (i = 0; i < vertices.size() - 1; ++i)
+	{
+		x0 = vertices[i].x;
+		y0 = vertices[i].y;
+
+		x1 = vertices[i + 1].x;
+		y1 = vertices[i + 1].y;
+
+		incrementedSignedArea = x0 * y1 - x1 * y0;
+
+		signedArea += incrementedSignedArea;
+
+		center.x += (x0 + x1) * incrementedSignedArea;
+		center.y += (y0 + y1) * incrementedSignedArea;
+	}
+
+	x0 = vertices[i].x;
+	y0 = vertices[i].y;
+	x1 = vertices[0].x;
+	y1 = vertices[0].y;
+
+	incrementedSignedArea = x0 * y1 - x1 * y0;
+	signedArea += incrementedSignedArea;
+	center.x += (x0 + x1) * incrementedSignedArea;
+	center.y += (y0 + y1) * incrementedSignedArea;
+
+	signedArea *= 0.5;
+
+	center.x /= (6.0 * signedArea);
+	center.y /= -(6.0 * signedArea);
+
+	this->center = center;
+}
