@@ -2,7 +2,7 @@
 
 void Engine::run(std::vector<Polygon> &polygons)
 {
-	for (Polygon p : polygons)
+	for (Polygon &p : polygons)
 	{
 		p.rotate();
 		p.update();
@@ -12,19 +12,18 @@ void Engine::run(std::vector<Polygon> &polygons)
 	{
 		for (int y = 0; y < polygons.size() - 1; y++)
 		{
-
 			for (int x = 0; x < polygons.size(); x++)
 			{
 				HST(polygons[y], polygons[x]);
 			}
 		}
 	}
-	
 }
 
 void Engine::HST(Polygon& p1, Polygon& p2)
 {
-
+	Polygon* s1 = &p1;
+	Polygon* s2 = &p2;
 }
 
 void Engine::processCollision(Polygon& p1, Polygon& p2)

@@ -12,26 +12,33 @@ void runEngine()
 {
 	while (window.isOpen())
 	{
-		window.clear(sf::Color(30, 30, 30, 255));
-
+		
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			handleInput(event);
 		}
+		window.clear(sf::Color(30, 30, 30, 255));
 
 		if (!pause)
 		{
 			engine.run(polygons);
+
+			for (Polygon& p : polygons)
+			{
+				// Render doesn't actually show anything to the screen, thats the job of "window.draw()".
+				// It just moves the position sf::ConvexShape object in the Polygon instance.
+				p.render();
+			}
 		}
 
-		for (Polygon p : polygons)
+		// Actually renders the polygon to the screen.
+		for (Polygon& p : polygons)
 		{
-			p.render();
 			window.draw(p.renderedShape);
 		}
 
-		for (sf::CircleShape c : drawingPoints)
+		for (sf::CircleShape &c : drawingPoints)
 		{
 			window.draw(c);
 		}
@@ -53,54 +60,31 @@ void handleInput(sf::Event& event)
 		{
 		}
 		// Remove the most recently added shape
-		if (keyReleased && keyCode == k::V && polygons.size() > 0)
+		else if (keyReleased && keyCode == k::V && polygons.size() > 0)
 		{
 			polygons.erase(polygons.begin() + polygons.size() - 1);
 		}
 		// Clear all shapes
-		if (keyReleased && keyCode == k::Escape && polygons.size() > 0)
+		else if (keyReleased && keyCode == k::Escape && polygons.size() > 0)
 		{
 			polygons.clear();
 		}
-		
-	}
+	}	
 	else 
 	{
 		if (keyReleased && keyCode == k::P)
 		{
-			sf::CircleShape circle(5);
+			sf::CircleShape circle(3.0f);
 			circle.setPosition(mouse.x, mouse.y);
 			drawingPoints.push_back(circle);
-		}
-		if (keyReleased && keyCode == k::D)
+		} 
+		else if (keyReleased && keyCode == k::D)
 		{
 			drawingPoints.erase(drawingPoints.begin() + drawingPoints.size() - 1);
 		}
-		if (keyReleased && keyCode == k::Enter)
+		else if (keyReleased && keyCode == k::Enter)
 		{
-			std::vector<Vertex> vertices;
-			sf::ConvexShape convexShape;
-
-			convexShape.setFillColor(sf::Color(rand() * rand() * rand()));
-			convexShape.setPointCount(4);
-			convexShape.setOutlineThickness(1.0f);
-
-			vertices.reserve(drawingPoints.size());
-			int i = 0;
-			for (sf::CircleShape c : drawingPoints)
-			{
-				Vertex v = { c.getPosition().x, c.getPosition().y };
-				vertices.push_back(v);
-				convexShape.setPoint(i, sf::Vector2f(v.x, v.y));
-
-				i++;
-			}
-
-			drawingPoints.clear();
-
-			Polygon p(0, 0, 1, vertices);
-			p.renderedShape = convexShape;
-			polygons.push_back(p);
+			makeShape();
 			pause = !pause;
 		}
 	}
@@ -110,6 +94,42 @@ void handleInput(sf::Event& event)
 		pause = !pause;
 		std::cout << "Pause: " << pause << std::endl;
 	}
+}
+
+void makeShape()
+{
+	// We are done drawing our polygon. We will take the positions of all the
+	// dots on the screen and put them into vertices.
+
+	std::vector<Vertex> vertices(drawingPoints.size());
+	sf::ConvexShape convexShape;
+
+	// We must define these before actually giving our convexShape any features ...
+	// Thanks SFML.
+	convexShape.setFillColor(sf::Color(rand() * rand() * rand()));
+	convexShape.setPointCount(drawingPoints.size());
+	convexShape.setOutlineThickness(1.0f);
+
+	int i = -1;
+	for (sf::CircleShape& c : drawingPoints)
+	{
+		Vertex v = { c.getPosition().x, c.getPosition().y };
+		std::cout << "(" << c.getPosition().x << ", " << c.getPosition().y << ")" << std::endl;
+		vertices[++i] = v;
+		convexShape.setPoint(i, sf::Vector2f(v.x, v.y));
+	}
+	drawingPoints.clear();
+
+	Polygon poly(0, 0, 1, vertices);
+	poly.center.y *= -1;
+	poly.vel = { 1,1 };
+	poly.ang_vel = .005f;
+	std::cout << "(" << poly.center.x << ", " << poly.center.y << ")" << std::endl;
+	convexShape.setOrigin(poly.center.x, poly.center.y);
+	convexShape.setPosition(poly.center.x, poly.center.y);
+
+	poly.renderedShape = convexShape;
+	polygons.push_back(poly);
 }
 
 	

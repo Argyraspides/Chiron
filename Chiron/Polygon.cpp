@@ -5,6 +5,7 @@ Polygon::Polygon(float xInit, float yInit, float mass, std::vector<Vertex> &vert
 	this->center = { xInit, yInit };
 	this->mass = mass;
 	this->vertices = vertices;
+	findCentroid(vertices);
 }
 
 void Polygon::update()
