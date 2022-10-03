@@ -1,9 +1,10 @@
 #include <iostream>
 #include <SFML\Graphics.hpp>
+#include "ENGINE.h"
 
 sf::RenderWindow window(sf::VideoMode(1280, 720), "Chiron");
 void runEngine();
-//Engine engine;
+Engine engine;
 int main()
 {
 	window.setFramerateLimit(60);
