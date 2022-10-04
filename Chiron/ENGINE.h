@@ -24,6 +24,9 @@ public:
 	bool HST                   (Polygon& p1, Polygon& p2);
 	// Processing Translational-only collision
 	void processCollision      (Polygon& p1, Polygon& p2);
+	// Finds the exact translation vector to separate the polygons
+	// So they are no longer overlapping - statically resoliving the collision.
+	void separatePolygons      (Polygon& p1, Polygon& p2);
 
 	/* 
 	 * Tells us if the polygon 'p1' has collided with one of the walls.

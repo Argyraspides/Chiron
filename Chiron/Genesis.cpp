@@ -1,18 +1,17 @@
-#include "GenesisHeaders.h"
-
+#include "GenesisFunctions.h"
 bool pause = false;
-
 int main()
 {
 	window.setFramerateLimit(60);
 	runEngine();
 }
 
+
 void runEngine()
 {
 	while (window.isOpen())
 	{
-		
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -31,7 +30,7 @@ void runEngine()
 			window.draw(p.renderedShape);
 		}
 
-		for (sf::CircleShape &c : drawingPoints)
+		for (sf::CircleShape& c : drawingPoints)
 		{
 			window.draw(c);
 		}
@@ -62,15 +61,15 @@ void handleInput(sf::Event& event)
 		{
 			polygons.clear();
 		}
-	}	
-	else 
+	}
+	else
 	{
 		if (keyReleased && keyCode == k::P)
 		{
 			sf::CircleShape circle(3.0f);
 			circle.setPosition(mouse.x, mouse.y);
 			drawingPoints.push_back(circle);
-		} 
+		}
 		else if (keyReleased && keyCode == k::D)
 		{
 			drawingPoints.erase(drawingPoints.begin() + drawingPoints.size() - 1);
@@ -82,7 +81,7 @@ void handleInput(sf::Event& event)
 		}
 	}
 
-	if (keyReleased && keyCode == k::SemiColon) 
+	if (keyReleased && keyCode == k::SemiColon)
 	{
 		pause = !pause;
 		std::cout << "Pause: " << pause << std::endl;
@@ -116,6 +115,5 @@ void makeShape()
 	poly.renderedShape = convexShape;
 	polygons.push_back(poly);
 }
-
 	
 

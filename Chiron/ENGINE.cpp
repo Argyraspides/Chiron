@@ -33,7 +33,7 @@ bool Engine::HST(Polygon& p1, Polygon& p2)
 {
 	Polygon* s1 = &p1;
 	Polygon* s2 = &p2;
-
+	float overlap = std::numeric_limits<float>::infinity();
 	for (int s = 0; s < 2; s++)
 	{
 		// On the second run, we take the vertex projections onto the axes formed by the normals
@@ -82,7 +82,7 @@ bool Engine::HST(Polygon& p1, Polygon& p2)
 		{
 			Vertex projectionAxis =
 				(s1->vertices[v].normal(s1->vertices[(v + 1) % s1->vertices.size()]));
-
+			projectionAxis.normalize();
 
 			float min1 =  std::numeric_limits<float>::infinity(), 
 				  max1 = -std::numeric_limits<float>::infinity();
@@ -104,12 +104,19 @@ bool Engine::HST(Polygon& p1, Polygon& p2)
 				max2 = std::max(max2, dotProd);
 			}
 
+			overlap = std::min(std::min(max1, max2) - std::max(min1, min2), overlap);
+
 			if (!(max1 >= min1 && max1 >= min2))
 			{
 				return false;
 			}
 		}
 	}
+
+	Vertex separationVec = { p2.center.x - p1.center.x, p2.center.y - p1.center.y };
+	float s = sqrtf(separationVec.x * separationVec.x + separationVec.y * separationVec.y);
+	Vertex finalShift = { -overlap * separationVec.x / s, -overlap * separationVec.y / s };
+	p1.shift(finalShift);
 
 	return true;
 }
