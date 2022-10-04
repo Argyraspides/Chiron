@@ -69,7 +69,15 @@ typedef struct Vertex {
 		this->x = v.x;
 		this->y = v.y;
 	};
-
+	Vertex   operator*(const Vertex& v)
+	{
+		return
+		{
+			this->x * v.x,
+			this->y * v.y,
+			this->z * v.z
+		};
+	}
 
 	float dotProduct(const Vertex& v2)
 	{

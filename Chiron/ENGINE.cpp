@@ -1,11 +1,25 @@
 #include "ENGINE.h"
-
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 void Engine::run(std::vector<Polygon> &polygons)
 {
+	Vertex flip;
+
 	for (Polygon &p : polygons)
 	{
 		p.update();
 		p.render();
+
+		if (collidesWithWall(p, flip))
+		{
+			/* The polygon, if it is going sufficiently fast, may not "escape" the wall line before the next
+			* application loop, and hence get "stuck" in the wall as its velocity vector is flipped back and forth
+			* continuously. We make sure to shift it by how fast it is going by to make sure it is no longer
+			* past the wall.
+			*/
+			p.shift(flip * p.vel.length());
+			processWallCollision(p, flip);
+		}
 	}
 
 	if (polygons.size() > 1)
@@ -16,11 +30,7 @@ void Engine::run(std::vector<Polygon> &polygons)
 			{
 				if (HST(polygons[y], polygons[x]))
 				{
-					std::cout << "COLLISION" << "\n";
-				}
-				else
-				{
-					std::cout << "." << "\n";
+					processCollision(polygons[y], polygons[x]);
 				}
 			}
 		}
@@ -91,4 +101,91 @@ void Engine::processCollision(Polygon& p1, Polygon& p2)
 
 	p2.vel.x = p1.vel.x + prev.x - p2.vel.x;
 	p2.vel.y = p1.vel.y + prev.y - p2.vel.y;
+}
+
+void Engine::processWallCollision(Polygon& p1, Vertex &flip)
+{
+	p1.vel = p1.vel * flip;
+}
+
+bool Engine::collidesWithWall(Polygon& p1, Vertex &flip)
+{
+	std::vector<Vertex> wallVecs =
+	{
+		{-1,0}, // left wall
+		{0,1} , // top wall
+		{1,0} , // right wall
+		{0,-1}  // bottom wall
+	};
+
+
+
+	for (int i = 0; i < 4; i++)
+	{
+		/* 
+		* Find the vertex furthest along the direction of the current wall. (1)
+		* This will be the point closest to the wall we are currently checking. 
+		* We then just need to know if this point is past the wall. (2)
+		*/
+
+		// (1)
+		float maxDotProd = -std::numeric_limits<float>::infinity();
+		int furthestPointIndex = 0;
+
+		for (int p = 0; p < p1.vertices.size(); p++)
+		{
+			float dotProd = p1.vertices[p].dotProduct(wallVecs[i]);
+			if (dotProd > maxDotProd)
+			{
+				maxDotProd = dotProd;
+				furthestPointIndex = p;
+			}
+		}
+
+		// (2)
+		switch (i) 
+		{
+			case 0:
+				if (p1.vertices[furthestPointIndex].x <= 0)
+				{
+					flip = { -1, 1 };
+					return true;
+				}
+				break;
+
+			case 1:
+				if (p1.vertices[furthestPointIndex].y >= SCREEN_HEIGHT)
+				{
+					flip = { 1, -1 };
+					return true;
+				}
+				break;
+
+			case 2:
+				if (p1.vertices[furthestPointIndex].x >= SCREEN_WIDTH)
+				{
+					flip = { -1, 1 };
+					return true;
+				}
+				break;
+
+			case 3:
+				if (p1.vertices[furthestPointIndex].y <= 0)
+				{
+					flip = { 1, -1 };
+					return true;
+				}
+				break;
+		}
+	}
+	return false;
+}
+
+void Engine::printPolygonCoords(Polygon& p1)
+{
+	for (int i = 0; i < p1.vertices.size(); i++) 
+	{
+		std::cout << "(" << p1.vertices[i].x << ", " << p1.vertices[i].y << "), ";
+	}
+	std::cout << "\n";
 }

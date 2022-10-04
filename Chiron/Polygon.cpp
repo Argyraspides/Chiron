@@ -13,7 +13,6 @@ void Polygon::update()
 	this->center = this->center + vel;
 	rotate();
 }
-
 /*
 POLYGON::ROATATE()
 
@@ -51,7 +50,7 @@ void Polygon::rotate()
 
 void Polygon::render()
 {
-	renderedShape.move(vel.x, vel.y);
+	renderedShape.setPosition(this->center.x, this->center.y);
 	/*
 	* SFML's .rotate() takes in degrees, so we make the conversion here.
 	* Degrees = Radians * (180/PI)
@@ -101,4 +100,9 @@ void Polygon::findCentroid(std::vector<Vertex> vertices)
 	center.y /= -(6.0 * signedArea);
 
 	this->center = center;
+}
+
+void Polygon::shift(Vertex shift)
+{
+	this->center = this->center + shift;
 }

@@ -20,6 +20,7 @@ public:
 	void update();
 	void rotate();
 	void render();
+	void shift(Vertex shift);
 
 	void findCentroid(std::vector<Vertex> vertices);
 
