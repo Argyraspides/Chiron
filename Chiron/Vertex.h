@@ -47,21 +47,29 @@ typedef struct Vertex {
 		};
 	};
 
+	Vertex crossProduct(const Vertex& v2)
+	{
+		return
+		{
+			v2.y * this->z - v2.z * this->y,
+			v2.z * this->x - v2.x * this->z,
+			v2.x * this->y - v2.y * this->x
+		};
+	};
+
+	Vertex normal(const Vertex& v2)
+	{
+		float dx = this->x - v2.x;
+		float dy = this->y - v2.y;
+		return { -dy, dx };
+	}
+
 	void   operator=(const Vertex& v)
 	{
 		this->x = v.x;
 		this->y = v.y;
 	};
 
-	Vertex crossProduct(const Vertex& v2)
-	{
-		return 
-		{ 
-			v2.y * this->z - v2.z * this->y, 
-			v2.z * this->x - v2.x * this->z, 
-			v2.x * this->y - v2.y * this->x 
-		};
-	};
 
 	float dotProduct(const Vertex& v2)
 	{
@@ -102,5 +110,7 @@ typedef struct Vertex {
 			this->z * this->z
 		);
 	};
+
+
 
 };

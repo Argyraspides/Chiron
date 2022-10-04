@@ -15,6 +15,7 @@ public:
 
 	float ang_vel = 0;
 	float mass = 1;
+	float elasticity = 1;
 
 	void update();
 	void rotate();

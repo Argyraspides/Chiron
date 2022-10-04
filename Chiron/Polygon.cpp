@@ -33,7 +33,7 @@ void Polygon::rotate()
 {
 	for (Vertex &v : vertices)
 	{	
-		v = v - center;
+		v = v + vel - center;
 
 		float sRot = sin(ang_vel);
 		float cRot = cos(ang_vel);
@@ -46,6 +46,7 @@ void Polygon::rotate()
 
 		v = shift + center;
 	}
+
 }
 
 void Polygon::render()

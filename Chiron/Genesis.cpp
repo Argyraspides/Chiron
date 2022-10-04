@@ -2,12 +2,14 @@
 
 bool pause = false;
 
-
 int main()
 {
 	window.setFramerateLimit(60);
 	runEngine();
 }
+
+
+
 void runEngine()
 {
 	while (window.isOpen())
@@ -23,13 +25,6 @@ void runEngine()
 		if (!pause)
 		{
 			engine.run(polygons);
-
-			for (Polygon& p : polygons)
-			{
-				// Render doesn't actually show anything to the screen, thats the job of "window.draw()".
-				// It just moves the position sf::ConvexShape object in the Polygon instance.
-				p.render();
-			}
 		}
 
 		// Actually renders the polygon to the screen.
@@ -95,7 +90,6 @@ void handleInput(sf::Event& event)
 		std::cout << "Pause: " << pause << std::endl;
 	}
 }
-
 void makeShape()
 {
 	// We are done drawing our polygon. We will take the positions of all the

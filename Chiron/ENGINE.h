@@ -1,5 +1,6 @@
 #pragma once
 #include "Polygon.h"
+#include <iostream>
 #include <cmath>
 
 class Engine
@@ -11,7 +12,7 @@ public:
 
 
 	// Hyperplane separation theorem algorithm
-	void HST             (Polygon& p1, Polygon& p2);
+	bool HST             (Polygon& p1, Polygon& p2);
 	void processCollision(Polygon& p1, Polygon& p2);
 
 	void run(std::vector<Polygon> &polygons);
