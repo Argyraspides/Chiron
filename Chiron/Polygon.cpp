@@ -13,23 +13,21 @@ void Polygon::update()
 	this->center = this->center + vel;
 	rotate();
 }
-/*
-POLYGON::ROATATE()
 
-		 Formula for a point's coordinates after rotation around the center:
-
-		 x * cos(t) - y * sin(t),
-		 y * cos(t) + x * sin(t)
-
-		 Once we move the shape back to the origin via shape.position -= shape.position,
-		 then each vertex will be at a location vertex -= shape.position.
-		 we can use that formula above to rotate each point around the origin,
-		 then move all the points back with vertex += shape.position
-
-*/
 
 void Polygon::rotate()
 {
+
+	/*
+		 Formula for a point's coordinates after rotation around the center for:
+
+		 x' = x * cos(t) - y * sin(t),
+		 y' = y * cos(t) + x * sin(t)
+
+		 To rotate about the point (shape.center.x, shape.center.y), we move the points so they are
+		 relative to the origin (0,0), rotate them about the origin, and move them back the same amount.
+	*/
+
 	for (Vertex &v : vertices)
 	{	
 		v = v + vel - center;
@@ -55,7 +53,8 @@ void Polygon::render()
 	* SFML's .rotate() takes in degrees, so we make the conversion here.
 	* Degrees = Radians * (180/PI)
 	*/ 
-	renderedShape.rotate(ang_vel * (180.0f / 3.14159265359));
+#define PI 3.141592653589793238462643383279
+	renderedShape.rotate(ang_vel * (180.0f / PI));
 }
 
 void Polygon::findCentroid(std::vector<Vertex> vertices)
@@ -105,4 +104,8 @@ void Polygon::findCentroid(std::vector<Vertex> vertices)
 void Polygon::shift(Vertex shift)
 {
 	this->center = this->center + shift;
+	for (Vertex& v : this->vertices)
+	{
+		v = v + shift;
+	}
 }

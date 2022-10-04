@@ -8,8 +8,6 @@ int main()
 	runEngine();
 }
 
-
-
 void runEngine()
 {
 	while (window.isOpen())
@@ -94,34 +92,27 @@ void makeShape()
 {
 	// We are done drawing our polygon. We will take the positions of all the
 	// dots on the screen and put them into vertices.
-
 	std::vector<Vertex> vertices(drawingPoints.size());
 	sf::ConvexShape convexShape;
-
 	// We must define these before actually giving our convexShape any features ...
 	// Thanks SFML.
 	convexShape.setFillColor(sf::Color(rand() * rand() * rand()));
 	convexShape.setPointCount(drawingPoints.size());
 	convexShape.setOutlineThickness(1.0f);
-
 	int i = -1;
 	for (sf::CircleShape& c : drawingPoints)
 	{
 		Vertex v = { c.getPosition().x, c.getPosition().y };
-		std::cout << "(" << c.getPosition().x << ", " << c.getPosition().y << ")" << std::endl;
 		vertices[++i] = v;
 		convexShape.setPoint(i, sf::Vector2f(v.x, v.y));
 	}
 	drawingPoints.clear();
-
 	Polygon poly(0, 0, 1, vertices);
 	poly.center.y *= -1;
-	poly.vel = { 1,1 };
-	poly.ang_vel = .005f;
-	std::cout << "(" << poly.center.x << ", " << poly.center.y << ")" << std::endl;
+	poly.vel = { 10,5 };
+	poly.ang_vel = 0.01f;
 	convexShape.setOrigin(poly.center.x, poly.center.y);
 	convexShape.setPosition(poly.center.x, poly.center.y);
-
 	poly.renderedShape = convexShape;
 	polygons.push_back(poly);
 }
