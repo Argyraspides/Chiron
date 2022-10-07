@@ -93,12 +93,6 @@ Vertex Engine::getCollisionPoint(Polygon& p1, Polygon& p2, Vertex &n)
 
 }
 
-bool   Engine::pointInPolygon(Vertex& point, Polygon& polygon)
-{
-	
-	return false;
-}
-
 bool   Engine::HST(Polygon& p1, Polygon& p2)
 {
 	Polygon* s1 = &p1;
@@ -187,7 +181,7 @@ bool   Engine::HST(Polygon& p1, Polygon& p2)
 	Vertex separationVec = { p2.center.x - p1.center.x, p2.center.y - p1.center.y };
 	float s = sqrtf(separationVec.x * separationVec.x + separationVec.y * separationVec.y);
 	shiftVec = { -overlap * separationVec.x / s, -overlap * separationVec.y / s };
-	shiftVec = shiftVec / 2;
+	shiftVec = shiftVec / 1.1f;
 	p1.shift(shiftVec);
 	return true;
 }

@@ -50,6 +50,7 @@ void handleInput(sf::Event& event)
 		// Spawn an arbitrary polygon
 		if (keyReleased && keyCode == k::A)
 		{
+
 		}
 		// Remove the most recently added shape
 		else if (keyReleased && keyCode == k::V && polygons.size() > 0)
@@ -61,6 +62,7 @@ void handleInput(sf::Event& event)
 		{
 			polygons.clear();
 		}
+
 	}
 	else
 	{
@@ -78,6 +80,28 @@ void handleInput(sf::Event& event)
 		{
 			makeShape();
 			pause = !pause;
+		}
+		else if (keyReleased && keyCode == k::C)
+		{
+			// Position of the circles center
+			Vertex circleCenter = { mouse.x, mouse.y };
+			// The circle will be approximated by this many vertices
+			int approximationFactor = 13;
+			int circleRadius = 30;
+
+			// The angle to change by on each iteration
+			float rotIncrements = (2*3.14159265359 / approximationFactor);
+			
+			for (int i = 0; i < approximationFactor; i++)
+			{
+				float theta = rotIncrements * i;
+				float xRot = circleRadius * cos(theta) - circleRadius * sin(theta);
+				float yRot = circleRadius * sin(theta) + circleRadius * cos(theta);
+				sf::CircleShape c(3);
+				c.setPosition(xRot + circleCenter.x, yRot + circleCenter.y);
+				drawingPoints.push_back(c);
+			}
+
 		}
 	}
 

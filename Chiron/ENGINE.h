@@ -47,9 +47,6 @@ public:
 	// Obtains the exact point of collision between two polygons once they have collided
 	Vertex getCollisionPoint(Polygon& p1, Polygon& p2, Vertex &n);
 
-	bool pointInPolygon(Vertex& point, Polygon& polygon);
-
-
 	// Methods for checking if there lies a point inside of a polygon
 	//bool onSegment(Vertex &p, Vertex &q, Vertex &r);
 	//bool doIntersect(Vertex &p1, Vertex &q1, Vertex &p2, Vertex &q2);
