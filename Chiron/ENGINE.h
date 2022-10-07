@@ -5,12 +5,15 @@
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
+#define TEMP_INERTIA 100
 
 class Engine
 {
 public:
 
 	Engine() = default;
+
+	Vertex shiftVec;
 
 	std::vector<Vertex> wallVecs =
 	{
@@ -24,9 +27,7 @@ public:
 	bool HST                   (Polygon& p1, Polygon& p2);
 	// Processing Translational-only collision
 	void processCollision      (Polygon& p1, Polygon& p2);
-	// Finds the exact translation vector to separate the polygons
-	// So they are no longer overlapping - statically resoliving the collision.
-	void separatePolygons      (Polygon& p1, Polygon& p2);
+	void processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionPoint, Vertex& n);
 
 	/* 
 	 * Tells us if the polygon 'p1' has collided with one of the walls.
@@ -37,8 +38,21 @@ public:
 	// Flips the appropriate velocity vector.
 	void processWallCollision  (Polygon& p1, Vertex &flip);
 
+	// Prints the coordinates of the vertices of the polygon p
 	void printPolygonCoords(Polygon& p);
+
+	// Updates and renders all shapes, compares pairs to evaluate collision 
 	void run(std::vector<Polygon> &polygons);
 
+	// Obtains the exact point of collision between two polygons once they have collided
+	Vertex getCollisionPoint(Polygon& p1, Polygon& p2, Vertex &n);
 
+	bool pointInPolygon(Vertex& point, Polygon& polygon);
+
+
+	// Methods for checking if there lies a point inside of a polygon
+	//bool onSegment(Vertex &p, Vertex &q, Vertex &r);
+	//bool doIntersect(Vertex &p1, Vertex &q1, Vertex &p2, Vertex &q2);
+	//bool isInside(Polygon &polygon, int n, Vertex &p);
+	//int  orientation(Vertex& p, Vertex& q, Vertex& r);
 };

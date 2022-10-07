@@ -108,7 +108,8 @@ void makeShape()
 	drawingPoints.clear();
 	Polygon poly(0, 0, 1, vertices);
 	poly.center.y *= -1;
-	poly.vel = { 10,5 };
+	int x = rand() % 10;
+	poly.vel = { 10, 5 };
 	poly.ang_vel = 0.01f;
 	convexShape.setOrigin(poly.center.x, poly.center.y);
 	convexShape.setPosition(poly.center.x, poly.center.y);

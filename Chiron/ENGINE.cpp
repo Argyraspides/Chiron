@@ -1,6 +1,7 @@
 #include "ENGINE.h"
 
-void Engine::run(std::vector<Polygon> &polygons)
+
+void   Engine::run(std::vector<Polygon> &polygons)
 {
 	Vertex flip;
 
@@ -8,6 +9,7 @@ void Engine::run(std::vector<Polygon> &polygons)
 	{
 		p.update();
 		p.render();
+		//printPolygonCoords(p);
 		if (collidesWithWall(p, flip))
 		{
 			processWallCollision(p, flip);
@@ -22,18 +24,87 @@ void Engine::run(std::vector<Polygon> &polygons)
 			{
 				if (HST(polygons[y], polygons[x]))
 				{
+					Vertex n;
+					Vertex collisionPoint = getCollisionPoint(polygons[y], polygons[x], n);
+					
+					//processCollision_ang(polygons[y], polygons[x], collisionPoint, n);
 					processCollision(polygons[y], polygons[x]);
+					
 				}	
 			}
 		}
 	}
 }
 
-bool Engine::HST(Polygon& p1, Polygon& p2)
+Vertex Engine::getCollisionPoint(Polygon& p1, Polygon& p2, Vertex &n)
+{
+
+	printPolygonCoords(p1);
+	printPolygonCoords(p2);
+
+	// Points of polygon 1 that are inside polygon 2, and vice versa, respectively.
+	std::vector<Vertex> lyingPoints1, lyingPoints2;
+
+	Polygon* p1Ptr = &p1;
+	Polygon* p2Ptr = &p2;
+
+	for (int p = 0; p < 2; p++)
+	{
+		// Check for polygon 2's points inside polygon 1's the second iteration.
+		if (p == 1)
+		{
+			p1Ptr = &p2;
+			p2Ptr = &p1;
+		}
+
+		for (int i = 0; i < p1Ptr->vertices.size(); i++)
+		{
+			if (p1Ptr->vertices[i].f_withinPolygon(p2Ptr->vertices))
+			{
+				if (p == 0)
+				{
+					lyingPoints1.push_back(p1Ptr->vertices[i]);
+				} 
+				else
+				{
+					lyingPoints2.push_back(p1Ptr->vertices[i]);
+				}
+			}
+		}
+
+	}
+
+	if (lyingPoints1.size() == 1 && lyingPoints2.size() == 0)
+	{
+		// This means that Polygon1 has collided with Polygon2 on its vertex
+		return lyingPoints1[0];
+	}
+	else if (lyingPoints1.size() == 0 && lyingPoints2.size() == 1)
+	{
+		// This means that Polygon2 has collided with Polygon1 on its vertex.
+		return lyingPoints2[0];
+	}
+	else if (lyingPoints1.size() == 1 && lyingPoints2.size() == 1)
+	{
+		// This means that there was an edge-edge collision, and so our collision
+		// point will simply be the average of these two points.
+		return (lyingPoints1[0] + lyingPoints2[0]) / 2.0f;
+	}
+
+}
+
+bool   Engine::pointInPolygon(Vertex& point, Polygon& polygon)
+{
+	
+	return false;
+}
+
+bool   Engine::HST(Polygon& p1, Polygon& p2)
 {
 	Polygon* s1 = &p1;
 	Polygon* s2 = &p2;
 	float overlap = std::numeric_limits<float>::infinity();
+
 	for (int s = 0; s < 2; s++)
 	{
 		// On the second run, we take the vertex projections onto the axes formed by the normals
@@ -115,13 +186,13 @@ bool Engine::HST(Polygon& p1, Polygon& p2)
 
 	Vertex separationVec = { p2.center.x - p1.center.x, p2.center.y - p1.center.y };
 	float s = sqrtf(separationVec.x * separationVec.x + separationVec.y * separationVec.y);
-	Vertex finalShift = { -overlap * separationVec.x / s, -overlap * separationVec.y / s };
-	p1.shift(finalShift);
-
+	shiftVec = { -overlap * separationVec.x / s, -overlap * separationVec.y / s };
+	shiftVec = shiftVec / 2;
+	p1.shift(shiftVec);
 	return true;
 }
 
-void Engine::processCollision(Polygon& p1, Polygon& p2)
+void   Engine::processCollision(Polygon& p1, Polygon& p2)
 {
 	Vertex prev = { p1.vel.x, p1.vel.y };
 
@@ -135,14 +206,43 @@ void Engine::processCollision(Polygon& p1, Polygon& p2)
 	p2.vel.y = p1.vel.y + prev.y - p2.vel.y;
 }
 
-void Engine::processWallCollision(Polygon& p1, Vertex &flip)
+void   Engine::processCollision_ang(Polygon& p1, Polygon& p2, Vertex &collisionPoint, Vertex &n)
+{
+	Vertex p1_p = (collisionPoint - p1.center);
+	Vertex p2_p = (collisionPoint - p2.center);
+	Vertex v_ab = p1.vel - p2.vel;
+
+	float numerator = -(1 + p1.elasticity) * v_ab.dotProduct(n);
+
+	float denominator =
+
+		(
+			n.dotProduct(n * (1 / p1.mass + 1 / p2.mass)) +	n.dotProduct
+			(
+				(p1_p.crossProduct(n)).crossProduct(p1_p) / TEMP_INERTIA
+				+
+				(p2_p.crossProduct(n)).crossProduct(p2_p) / TEMP_INERTIA
+			)
+
+		);
+
+	float j = numerator / denominator;
+	Vertex jn = n * j;
+
+	p1.vel = p1.vel + jn / p1.mass;
+	p1.ang_vel = p1.ang_vel + (p1_p.crossProduct(jn) / TEMP_INERTIA).z;
+
+	p2.vel = p2.vel - jn / p2.mass;
+	p2.ang_vel = p2.ang_vel - (p2_p.crossProduct(jn) / TEMP_INERTIA).z;
+}
+
+void   Engine::processWallCollision(Polygon& p1, Vertex &flip)
 {
 	p1.vel = p1.vel * flip;
 }
 
-bool Engine::collidesWithWall(Polygon& p1, Vertex &flip)
+bool   Engine::collidesWithWall(Polygon& p1, Vertex &flip)
 {
-
 	for (int i = 0; i < wallVecs.size(); i++)
 	{
 		/* 
@@ -221,15 +321,21 @@ bool Engine::collidesWithWall(Polygon& p1, Vertex &flip)
 	return false;
 }
 
-void Engine::printPolygonCoords(Polygon& p1)
+void   Engine::printPolygonCoords(Polygon& p1)
 {
-	for (int i = 0; i < p1.vertices.size(); i++) 
+	std::cout << "polygon(";
+	for (int x = 0; x < 2; x++)
 	{
-		std::cout << "(" << p1.vertices[i].x << ", " << -p1.vertices[i].y << ")";
-		if (i < p1.vertices.size() - 1)
+		for (int i = 0; i < p1.vertices.size(); i++)
 		{
-			std::cout << ",";
+			std::cout << "(" << p1.vertices[i].x << ", " << p1.vertices[i].y << ")";
+			if (i < p1.vertices.size() - 1)
+			{
+				std::cout << ",";
+			}
 		}
+		std::cout << "\n";
 	}
-	std::cout << "\n";
+	
 }
+
