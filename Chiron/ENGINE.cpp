@@ -9,7 +9,6 @@ void   Engine::run(std::vector<Polygon>& polygons)
 	{
 		p.update();
 		p.render();
-		//printPolygonCoords(p);
 		if (collidesWithWall(p, flip))
 		{
 			processWallCollision(p, flip);
@@ -24,16 +23,11 @@ void   Engine::run(std::vector<Polygon>& polygons)
 			{
 				if (HST(polygons[y], polygons[x]))
 				{
-					printPolygonCoords(polygons[y]);
-					printPolygonCoords(polygons[x]);
 					bool origin = false;
 					Vertex collisionPoint = getCollisionPoint(polygons[y], polygons[x], origin);
 					Vertex n = getCollisionNormal(polygons[y], polygons[x], collisionPoint, origin);
-					collisionPoint.print();
-					n.print();
-					//processCollision_ang(polygons[y], polygons[x], collisionPoint, n);
-					processCollision(polygons[y], polygons[x]);
-
+					processCollision_ang(polygons[y], polygons[x], collisionPoint, n);
+					//processCollision(polygons[y], polygons[x]);
 				}
 			}
 		}
@@ -98,10 +92,14 @@ Vertex Engine::getCollisionPoint(Polygon& p1, Polygon& p2, bool &origin)
 	} 
 	else if (lyingPoints1.size() == 2 && lyingPoints2.size() == 0)
 	{
+		// This means that the edge of Polygon2 was wide enough to completely contain the edge of
+		// Polygon1
 		return (lyingPoints1[0] + lyingPoints1[1]) * 0.5f;
 	}
 	else if (lyingPoints1.size() == 0 && lyingPoints2.size() == 2)
 	{
+		// This means that the edge of Polygon1 was wide enough to completely contain the edge of
+		// Polygon2
 		return (lyingPoints2[0] + lyingPoints2[1]) * 0.5f;
 	}
 
@@ -137,9 +135,6 @@ Vertex Engine::getCollisionNormal(Polygon& p1, Polygon& p2, Vertex& collisionPoi
 		l_norm.m = -(1 / l_norm.m);
 		// Changes intercept to pass through the collisionPoint.
 		l_norm.c = collisionPoint.y - l_norm.m * collisionPoint.x;
-
-		l.print();
-		l_norm.print();
 
 		Vertex intersection = p2Ptr->vertices[i].getIntersection(l, l_norm);
 
@@ -283,16 +278,16 @@ void   Engine::processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionP
 				(p2_p.crossProduct(n)).crossProduct(p2_p) / TEMP_INERTIA
 			)
 
-			);
+		);
 
 	float j = numerator / denominator;
 	Vertex jn = n * j;
 
 	p1.vel = p1.vel + jn / p1.mass;
-	p1.ang_vel = p1.ang_vel + (p1_p.crossProduct(jn) / TEMP_INERTIA).z;
+	p1.ang_vel = p1.ang_vel + (p1_p.crossProduct(jn) / 5000).z;
 
 	p2.vel = p2.vel - jn / p2.mass;
-	p2.ang_vel = p2.ang_vel - (p2_p.crossProduct(jn) / TEMP_INERTIA).z;
+	p2.ang_vel = p2.ang_vel - (p2_p.crossProduct(jn) / 5000).z;
 }
 
 void   Engine::processWallCollision(Polygon& p1, Vertex& flip)
@@ -380,21 +375,4 @@ bool   Engine::collidesWithWall(Polygon& p1, Vertex& flip)
 	return false;
 }
 
-void   Engine::printPolygonCoords(Polygon& p1)
-{
-	std::cout << "polygon(";
-	for (int x = 0; x < 2; x++)
-	{
-		for (int i = 0; i < p1.vertices.size(); i++)
-		{
-			std::cout << "(" << p1.vertices[i].x << ", " << p1.vertices[i].y << ")";
-			if (i < p1.vertices.size() - 1)
-			{
-				std::cout << ",";
-			}
-		}
-		std::cout << "\n";
-	}
-
-}
 

@@ -38,9 +38,6 @@ public:
 	// Flips the appropriate velocity vector.
 	void processWallCollision  (Polygon& p1, Vertex &flip);
 
-	// Prints the coordinates of the vertices of the polygon p
-	void printPolygonCoords(Polygon& p);
-
 	// Updates and renders all shapes, compares pairs to evaluate collision 
 	void run(std::vector<Polygon> &polygons);
 

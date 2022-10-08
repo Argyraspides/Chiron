@@ -14,7 +14,6 @@ void Polygon::update()
 	rotate();
 }
 
-
 void Polygon::rotate()
 {
 
@@ -107,5 +106,22 @@ void Polygon::shift(Vertex shift)
 	for (Vertex& v : this->vertices)
 	{
 		v = v + shift;
+	}
+}
+
+void Polygon::print()
+{
+	std::cout << "polygon(";
+	for (int x = 0; x < 2; x++)
+	{
+		for (int i = 0; i < vertices.size(); i++)
+		{
+			std::cout << "(" << vertices[i].x << ", " << vertices[i].y << ")";
+			if (i < vertices.size() - 1)
+			{
+				std::cout << ",";
+			}
+		}
+		std::cout << "\n";
 	}
 }
