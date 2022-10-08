@@ -132,9 +132,13 @@ void makeShape()
 	drawingPoints.clear();
 	Polygon poly(0, 0, 1, vertices);
 	poly.center.y *= -1;
-	int x = rand() % 10;
-	poly.vel = { 10, 5 };
-	poly.ang_vel = 0.01f;
+	float x = rand() % 10;
+	float y = rand() % 10;
+
+	poly.vel = { x,  y };
+
+	float a = (rand() % 5) / 50;
+	poly.ang_vel = a;
 	convexShape.setOrigin(poly.center.x, poly.center.y);
 	convexShape.setPosition(poly.center.x, poly.center.y);
 	poly.renderedShape = convexShape;

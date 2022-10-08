@@ -14,6 +14,7 @@ public:
 	Engine() = default;
 
 	Vertex shiftVec;
+	int flag = 0;
 
 	std::vector<Vertex> wallVecs =
 	{

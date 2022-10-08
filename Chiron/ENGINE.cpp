@@ -26,8 +26,13 @@ void   Engine::run(std::vector<Polygon>& polygons)
 					bool origin = false;
 					Vertex collisionPoint = getCollisionPoint(polygons[y], polygons[x], origin);
 					Vertex n = getCollisionNormal(polygons[y], polygons[x], collisionPoint, origin);
+					polygons[y].print();
+					polygons[x].print();
+					collisionPoint.print();
+					n.print();
+					processCollision(polygons[y], polygons[x]);
 					processCollision_ang(polygons[y], polygons[x], collisionPoint, n);
-					//processCollision(polygons[y], polygons[x]);
+					flag++;
 				}
 			}
 		}
@@ -205,13 +210,17 @@ bool   Engine::HST(Polygon& p1, Polygon& p2)
 
 		for (int v = 0; v < s1->vertices.size(); v++)
 		{
+			// The axis on which we want to project is normal to the line formed by the points
+			// s1->vertices[v] and s1->vertices[v + 1] where v + 1 wraps around to 0 on the final vertex
 			Vertex projectionAxis =
 				(s1->vertices[v].normal(s1->vertices[(v + 1) % s1->vertices.size()]));
 			projectionAxis.normalize();
 
 			float min1 = std::numeric_limits<float>::infinity(),
-				max1 = -std::numeric_limits<float>::infinity();
+				  max1 = -std::numeric_limits<float>::infinity();
 
+			// min1 and 2, max1 and 2 are just the minimum and maximum vertex projections onto the axis.
+			// for Polygon1 and 2 respectively.
 			for (int p = 0; p < s1->vertices.size(); p++)
 			{
 				float dotProd = s1->vertices[p].dotProduct(projectionAxis);
@@ -220,7 +229,7 @@ bool   Engine::HST(Polygon& p1, Polygon& p2)
 			}
 
 			float min2 = std::numeric_limits<float>::infinity(),
-				max2 = -std::numeric_limits<float>::infinity();
+				  max2 = -std::numeric_limits<float>::infinity();
 
 			for (int p = 0; p < s2->vertices.size(); p++)
 			{
@@ -283,11 +292,11 @@ void   Engine::processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionP
 	float j = numerator / denominator;
 	Vertex jn = n * j;
 
-	p1.vel = p1.vel + jn / p1.mass;
-	p1.ang_vel = p1.ang_vel + (p1_p.crossProduct(jn) / 5000).z;
+	//p1.vel = p1.vel + jn / p1.mass;
+	p1.ang_vel = p1.ang_vel + (p1_p.crossProduct(jn) / 1000).z;
 
-	p2.vel = p2.vel - jn / p2.mass;
-	p2.ang_vel = p2.ang_vel - (p2_p.crossProduct(jn) / 5000).z;
+	//p2.vel = p2.vel - jn / p2.mass;
+	p2.ang_vel = p2.ang_vel - (p2_p.crossProduct(jn) / 1000).z;
 }
 
 void   Engine::processWallCollision(Polygon& p1, Vertex& flip)
