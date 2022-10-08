@@ -89,7 +89,7 @@ void handleInput(sf::Event& event)
 			int approximationFactor = 13;
 			int circleRadius = 30;
 
-			// The angle to change by on each iteration
+			// The angle to change by on each iteration. 2pi radians is one full rotation.
 			float rotIncrements = (2*3.14159265359 / approximationFactor);
 			
 			for (int i = 0; i < approximationFactor; i++)

@@ -45,11 +45,19 @@ public:
 	void run(std::vector<Polygon> &polygons);
 
 	// Obtains the exact point of collision between two polygons once they have collided
-	Vertex getCollisionPoint(Polygon& p1, Polygon& p2, Vertex &n);
+	Vertex getCollisionPoint(Polygon& p1, Polygon& p2, bool &origin);
 
-	// Methods for checking if there lies a point inside of a polygon
-	//bool onSegment(Vertex &p, Vertex &q, Vertex &r);
-	//bool doIntersect(Vertex &p1, Vertex &q1, Vertex &p2, Vertex &q2);
-	//bool isInside(Polygon &polygon, int n, Vertex &p);
-	//int  orientation(Vertex& p, Vertex& q, Vertex& r);
+	/* Gets the collision normal of the two polygons (the collision normal is defined as
+	*  the normal to the edge of the polygon on which the collision occured). 
+	* 
+	*  If there is an edge-edge collision, taking the normal of either edge will work.
+	* 
+	* "origin" is an identifier for which polygon had its vertex-edge collision.
+	*  E.g. if Polygon1's vertex collided with Polygon2's edge, then "origin" would be false.
+	*  If Polygon2's vertex collided with Polygon1's edge, then "origin" would be true.
+	*  If there is an edge-edge collision, it doesn't matter which one we take (hence it is 
+	*  initially set to false).
+	*/
+	Vertex getCollisionNormal(Polygon& p1, Polygon& p2, Vertex& collisionPoint, bool &origin);
+
 };

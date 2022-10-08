@@ -27,4 +27,13 @@ typedef struct Line
 		return (xIntersection < xMax&& xIntersection > xMin);
 
 	}
+	void print()
+	{
+		std::cout << "y = " << this->m << "x + " << this->c << "\n";
+	}
+
+	typedef struct Vertex {
+		float x, y, z;
+	};
+
 };

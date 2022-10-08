@@ -45,6 +45,43 @@ typedef struct Vertex {
 			this->z / a 
 		};
 	};
+	
+	Vertex operator*(const Vertex& v)
+	{
+		return
+		{
+			this->x * v.x,
+			this->y * v.y,
+			this->z * v.z
+		};
+	}
+
+	void   operator=(const Vertex& v)
+	{
+		this->x = v.x;
+		this->y = v.y;
+	};
+
+	void normalize()
+	{
+		*this =
+
+			*this
+			/
+			sqrt
+			(
+				this->x * this->x
+				+
+				this->y * this->y
+				+
+				this->z * this->z
+			);
+	};
+
+	void print()
+	{
+		std::cout << "(" << this->x << ", " << this->y << ")" << "\n";
+	}
 
 	Vertex crossProduct(const Vertex& v2)
 	{
@@ -63,19 +100,25 @@ typedef struct Vertex {
 		return { -dy, dx };
 	}
 
-	void   operator=(const Vertex& v)
+	Vertex getIntersection(Line& l1, Line& l2)
 	{
-		this->x = v.x;
-		this->y = v.y;
-	};
-	Vertex   operator*(const Vertex& v)
-	{
-		return
-		{
-			this->x * v.x,
-			this->y * v.y,
-			this->z * v.z
-		};
+		/*
+
+		y = m1x + c1
+	  - y = m2x + c2
+	 -----------------------------
+		0 = m1x - m2x + c1 - c2
+		0 = x(m1 - m2) + c1 - c2
+		x = (-c1 + c2) / (m1 - m2)
+		y = m1x + c1 or m2x + c2
+
+		*/
+
+		float x = (-l1.c + l2.c) / (l1.m - l2.m);
+		float y = l1.m * x + l1.c;
+
+		return { x, y };
+
 	}
 
 	float dotProduct(const Vertex v2)
@@ -89,22 +132,6 @@ typedef struct Vertex {
 			v2.z * this->z
 		};
 	}
-
-	void normalize()
-	{
-		*this = 
-
-			*this
-			/ 
-			sqrt
-			(
-				this->x * this->x 
-				+ 
-				this->y * this->y 
-				+ 
-				this->z * this->z
-			);
-	};
 
 	float length()
 	{
@@ -209,6 +236,38 @@ typedef struct Vertex {
 				c = !c;
 		}
 		return c;
+	}
+
+	Line getLineEq(Vertex& v2)
+	{
+		/*
+
+		 let m = (y2 - y1) / (x2 - x1)
+
+		 y - y1 = m(x - x1)
+		 y = mx - mx1 + y1
+
+		 'm' is our 'm' and 'lx1 + y1' is our 'c' in 'y = mx + c'
+
+		*/
+
+		Line l;
+
+		l.m = (v2.y - this->y) / (v2.x - this->x);
+		l.c = -l.m * this->x + this->y;
+
+		return l;
+	}
+
+
+	float getDistance(Vertex& v2)
+	{
+		return sqrtf
+		(
+			(v2.x - this->x) * (v2.x - this->x)
+			+ 
+			(v2.y - this->y) * (v2.y - this->y)
+		);
 	}
 
 };
