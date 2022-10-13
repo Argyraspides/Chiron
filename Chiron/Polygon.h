@@ -8,6 +8,7 @@ public:
 	 
 	Vertex center = { 0,0,0 };
 	Vertex vel = { 0,0,0 };
+	Vertex shiftVec;
 
 	std::vector<Vertex> vertices;
 

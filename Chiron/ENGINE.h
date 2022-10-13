@@ -5,7 +5,7 @@
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
-#define TEMP_INERTIA 100
+#define TEMP_INERTIA 45000
 
 class Engine
 {
@@ -13,8 +13,7 @@ public:
 
 	Engine() = default;
 
-	Vertex shiftVec;
-	int flag = 0;
+	float collisionCount = 0;
 
 	std::vector<Vertex> wallVecs =
 	{
@@ -25,10 +24,18 @@ public:
 	};
 
 	// Hyperplane separation theorem algorithm
-	bool HST                   (Polygon& p1, Polygon& p2);
+	bool HST(Polygon& p1, Polygon& p2);
 	// Processing Translational-only collision
 	void processCollision      (Polygon& p1, Polygon& p2);
 	void processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionPoint, Vertex& n);
+
+	// Gilbert-Johnathan-Keerthi Algorithm
+	bool GJK(Polygon& a1, Polygon& a2);
+	// Retrieves the support point for the GJK algorithm
+	Vertex support(Polygon& a1, Polygon& a2, Vertex& vector);
+	// Checks if the current triangle, or "simplex" contains the origin.
+	bool checkTriangle(std::vector<Vertex>& triangle, Vertex& direction);
+
 
 	/* 
 	 * Tells us if the polygon 'p1' has collided with one of the walls.
@@ -57,5 +64,8 @@ public:
 	*  initially set to false).
 	*/
 	Vertex getCollisionNormal(Polygon& p1, Polygon& p2, Vertex& collisionPoint, bool &origin);
+
+	// Separates the shapes by the appropriate amount, such that they are no longer overlapping
+	void separatePolygons(Polygon& p1, Polygon& p2, Vertex& collisionPoint, bool& origin);
 
 };

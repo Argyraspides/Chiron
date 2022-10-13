@@ -17,7 +17,15 @@ void runEngine()
 		{
 			handleInput(event);
 		}
-		window.clear(sf::Color(30, 30, 30, 255));
+
+		if (!pause)
+		{
+			window.clear(sf::Color(30, 30, 30, 255));
+		}
+		else
+		{
+			window.clear(sf::Color(75, 80, 84, 255));
+		}
 
 		if (!pause)
 		{
@@ -62,6 +70,10 @@ void handleInput(sf::Event& event)
 		{
 			polygons.clear();
 		}
+		else if (keyReleased && keyCode == k::C)
+		{
+			system("CLS");
+		}
 
 	}
 	else
@@ -90,7 +102,7 @@ void handleInput(sf::Event& event)
 			int circleRadius = 30;
 
 			// The angle to change by on each iteration. 2pi radians is one full rotation.
-			float rotIncrements = (2*3.14159265359 / approximationFactor);
+			float rotIncrements = (2 * 3.14159265359 / approximationFactor);
 			
 			for (int i = 0; i < approximationFactor; i++)
 			{
@@ -108,7 +120,6 @@ void handleInput(sf::Event& event)
 	if (keyReleased && keyCode == k::SemiColon)
 	{
 		pause = !pause;
-		std::cout << "Pause: " << pause << std::endl;
 	}
 }
 void makeShape()
@@ -132,13 +143,12 @@ void makeShape()
 	drawingPoints.clear();
 	Polygon poly(0, 0, 1, vertices);
 	poly.center.y *= -1;
-	float x = rand() % 10;
-	float y = rand() % 10;
+	float x = rand() % 2;
+	float y = rand() % 2;
 
 	poly.vel = { x,  y };
 
-	float a = (rand() % 5) / 50;
-	poly.ang_vel = a;
+	poly.ang_vel = 0.01f;
 	convexShape.setOrigin(poly.center.x, poly.center.y);
 	convexShape.setPosition(poly.center.x, poly.center.y);
 	poly.renderedShape = convexShape;

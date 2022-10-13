@@ -1,7 +1,6 @@
 #pragma once
 #include "Line.h"
 typedef struct Vertex {
-
 	float x = 0;
 	float y = 0;
 	float z = 0;
@@ -35,16 +34,6 @@ typedef struct Vertex {
 			this->z * a 
 		};
 	};
-
-	Vertex operator/(const float& a)
-	{
-		return 
-		{ 
-			this->x / a, 
-			this->y / a, 
-			this->z / a 
-		};
-	};
 	
 	Vertex operator*(const Vertex& v)
 	{
@@ -56,7 +45,17 @@ typedef struct Vertex {
 		};
 	}
 
-	void   operator=(const Vertex& v)
+	Vertex operator/(const float& a)
+	{
+		return 
+		{ 
+			this->x / a, 
+			this->y / a, 
+			this->z / a 
+		};
+	};
+	
+	void   operator=(const Vertex v)
 	{
 		this->x = v.x;
 		this->y = v.y;
@@ -95,12 +94,28 @@ typedef struct Vertex {
 
 	Vertex normal(const Vertex& v2)
 	{
-		float dx = this->x - v2.x;
-		float dy = this->y - v2.y;
+		float dx = v2.x - this->x;
+		float dy = v2.y - this->y;
 		return { -dy, dx };
 	}
 
-	Vertex getIntersection(Line& l1, Line& l2)
+	Vertex normalized()
+	{
+		return 
+			
+			*this
+			/
+			sqrt
+			(
+				this->x * this->x
+				+
+				this->y * this->y
+				+
+				this->z * this->z
+			);
+	}
+
+	static Vertex getIntersection(Line& l1, Line& l2)
 	{
 		/*
 
@@ -258,7 +273,6 @@ typedef struct Vertex {
 
 		return l;
 	}
-
 
 	float getDistance(Vertex& v2)
 	{

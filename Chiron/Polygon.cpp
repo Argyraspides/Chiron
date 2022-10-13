@@ -116,7 +116,7 @@ void Polygon::print()
 	{
 		for (int i = 0; i < vertices.size(); i++)
 		{
-			std::cout << "(" << vertices[i].x << ", " << vertices[i].y << ")";
+			std::cout << "(" << vertices[i].x << ", " << -vertices[i].y << ")";
 			if (i < vertices.size() - 1)
 			{
 				std::cout << ",";

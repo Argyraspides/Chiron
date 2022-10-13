@@ -32,8 +32,4 @@ typedef struct Line
 		std::cout << "y = " << this->m << "x + " << this->c << "\n";
 	}
 
-	typedef struct Vertex {
-		float x, y, z;
-	};
-
 };
