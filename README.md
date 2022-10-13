@@ -13,7 +13,7 @@ C - While paused, draws a circle (approximated with 26 edges).
 
 D - While paused, deletes the last drawn polygon vertex.
 
-P - While paused, Draws a point for a polygon vertex.
+P - While paused, draws a point for a polygon vertex.
 
 S - While paused, draws a square.
 
@@ -23,6 +23,6 @@ Controls while unpaused:
 
 V - While unpaused, deletes the last drawn polygon. 
 
-C - While unpaused, Clears the console window.
+C - While unpaused, clears the console window.
 
 Esc - While unpaused, deletes all polygons from the engine.
