@@ -5,11 +5,11 @@ dot products rather than trigonometric functions to detect vertex projection ove
 
 Controls:
 
-; - Pause (you must pause before drawing polygons).
-P - While paused, Draws a point for a polygon vertex.
-Enter - While paused, Unpauses and adds the polygon to the engine.
-V - While unpaused, deletes the last drawn polygon.
-C - While unpaused, Clears the console window.
-C - While paused, adds a circle (approximated with 20 edges).
-D - While paused, deletes the last drawn polygon vertex.
-Esc - While unpaused, deletes all polygons from the engine.
+; - Pause (you must pause before drawing polygons). \n
+P - While paused, Draws a point for a polygon vertex. \n
+Enter - While paused, Unpauses and adds the polygon to the engine. \n
+V - While unpaused, deletes the last drawn polygon. \n
+C - While unpaused, Clears the console window. \n
+C - While paused, adds a circle (approximated with 20 edges). \n
+D - While paused, deletes the last drawn polygon vertex. \n
+Esc - While unpaused, deletes all polygons from the engine. \n
