@@ -499,11 +499,23 @@ void   Engine::separatePolygons(Polygon& p1, Polygon& p2, Vertex& collisionPoint
 					float vel_scale = v_p.normalized().dotProduct(shiftVertex.normalized());
 					float vel_length = v_p.length();
 
+					// We do not want to flip the maximum penetration depth whatsoever
 					if (vel_scale < 0) vel_scale *= -1;
+					// If 0, then we don't need to worry about rotation. We therefore add 1 so the final scaling
+					// doesn't affect shiftVertex.
 					if (vel_scale == 0) vel_scale += 1;
+
+					// We don't want to scale down the maximum penetration depth
 					float scaleFactor_m = vel_scale * vel_length;
 					scaleFactor_m = (scaleFactor_m < 1) ? (scaleFactor_m + 1) : (scaleFactor_m);
-					s1->shift(shiftVertex * scaleFactor_m);
+
+					// 100% guarantee isn't enough. For a  200% guarantee, we also shift the other shape away by 
+					// the opposite vector. This means that our long term accuracy of the engine is slightly off, 
+					// but just fine for short term (think butterfly effect).
+					Vertex finalShift = shiftVertex * scaleFactor_m;
+
+					s1->shift(finalShift);
+					s2->shift(finalShift * -1);
 					return;
 				}
 
