@@ -3,14 +3,13 @@
 #include <iostream>
 #include <cmath>
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1366
+#define SCREEN_HEIGHT 768
 #define TEMP_INERTIA 45000
 
 class Engine
 {
 public:
-
 	Engine() = default;
 
 	float collisionCount = 0;
@@ -35,7 +34,6 @@ public:
 	Vertex support(Polygon& a1, Polygon& a2, Vertex& vector);
 	// Checks if the current triangle, or "simplex" contains the origin.
 	bool checkTriangle(std::vector<Vertex>& triangle, Vertex& direction);
-
 
 	/* 
 	 * Tells us if the polygon 'p1' has collided with one of the walls.

@@ -113,7 +113,6 @@ void handleInput(sf::Event& event)
 				c.setPosition(xRot + circleCenter.x, yRot + circleCenter.y);
 				drawingPoints.push_back(c);
 			}
-
 		}
 		else if (keyReleased && keyCode == k::S)
 		{

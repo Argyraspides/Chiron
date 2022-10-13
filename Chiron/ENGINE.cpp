@@ -1,6 +1,5 @@
 #include "ENGINE.h"
 
-
 void   Engine::run(std::vector<Polygon>& polygons)
 {
 	Vertex flip;
@@ -23,7 +22,6 @@ void   Engine::run(std::vector<Polygon>& polygons)
 		{
 			for (int x = y + 1; x < polygons.size(); x++)
 			{
-
 				if (GJK(polygons[y], polygons[x]))
 				{
 					// Determines if p1's vertex collided with p2's edge, or vice versa.
@@ -34,8 +32,11 @@ void   Engine::run(std::vector<Polygon>& polygons)
 					Vertex collisionPoint = getCollisionPoint(polygons[y], polygons[x], origin);
 					Vertex n = getCollisionNormal(polygons[y], polygons[x], collisionPoint, origin);
 
-					processCollision_ang(polygons[y], polygons[x], collisionPoint, n);
 					separatePolygons(polygons[y], polygons[x], collisionPoint, origin);
+					processCollision_ang(polygons[y], polygons[x], collisionPoint, n);
+					
+					polygons[x].shift((polygons[x].center - polygons[y].center).normalized());
+
 				}
 			}
 		}
@@ -250,7 +251,7 @@ bool   Engine::HST(Polygon& p1, Polygon& p2)
 	return true;
 }
 
-bool Engine::GJK(Polygon& p1, Polygon& p2)
+bool   Engine::GJK(Polygon& p1, Polygon& p2)
 {
 	Vertex collisionPoint;
 	Vertex directionVector = { 1,1 };
@@ -309,7 +310,7 @@ Vertex Engine::support(Polygon& a1, Polygon& a2, Vertex& vector)
 	return { p1.x - p2.x, -p1.y - -p2.y };
 }
 
-bool Engine::checkTriangle(std::vector<Vertex>& triangle, Vertex& direction)
+bool   Engine::checkTriangle(std::vector<Vertex>& triangle, Vertex& direction)
 {
 
 	if (triangle.size() == 2)
@@ -372,7 +373,7 @@ void   Engine::processCollision(Polygon& p1, Polygon& p2)
 void   Engine::processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionPoint, Vertex& n)
 {
 
-	float e = 0.9;
+	float e = 1.0f;
 	float j;
 	Vertex v_ap, v_bp, r_ap, r_bp;
 
@@ -420,7 +421,6 @@ void   Engine::processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionP
 
 void   Engine::separatePolygons(Polygon& p1, Polygon& p2, Vertex& collisionPoint, bool& origin)
 {
-
 	Polygon* s1 = &p1;
 	Polygon* s2 = &p2;
 
@@ -518,9 +518,7 @@ void   Engine::separatePolygons(Polygon& p1, Polygon& p2, Vertex& collisionPoint
 					s2->shift(finalShift * -1);
 					return;
 				}
-
 			}
-
 		}
 	}
 }
