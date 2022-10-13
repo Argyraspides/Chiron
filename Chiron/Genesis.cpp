@@ -115,6 +115,27 @@ void handleInput(sf::Event& event)
 			}
 
 		}
+		else if (keyReleased && keyCode == k::S)
+		{
+			// Position of the squares center
+			Vertex squareCenter = { mouse.x, mouse.y };
+			// The circle will be approximated by this many vertices
+			int approximationFactor = 4;
+			int circleRadius = 30;
+
+			// The angle to change by on each iteration. 2pi radians is one full rotation.
+			float rotIncrements = (2 * 3.14159265359 / approximationFactor);
+
+			for (int i = 0; i < approximationFactor; i++)
+			{
+				float theta = rotIncrements * i;
+				float xRot = circleRadius * cos(theta) - circleRadius * sin(theta);
+				float yRot = circleRadius * sin(theta) + circleRadius * cos(theta);
+				sf::CircleShape c(3);
+				c.setPosition(xRot + squareCenter.x, yRot + squareCenter.y);
+				drawingPoints.push_back(c);
+			}
+		}
 	}
 
 	if (keyReleased && keyCode == k::SemiColon)
