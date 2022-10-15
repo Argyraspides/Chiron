@@ -6,6 +6,7 @@ Polygon::Polygon(float xInit, float yInit, float mass, std::vector<Vertex> &vert
 	this->mass = mass;
 	this->vertices = vertices;
 	findCentroid(vertices);
+	getRotationalInertia();
 }
 
 void Polygon::update()
@@ -43,6 +44,27 @@ void Polygon::rotate()
 		v = shift + center;
 	}
 
+}
+
+void Polygon::rotate_deg(float degrees)
+{
+	// see the rotate() function for an explanation.
+
+	for (Vertex& v : vertices)
+	{
+		v = v + vel - center;
+
+		float sRot = sin(degrees);
+		float cRot = cos(degrees);
+
+		Vertex shift =
+		{
+			v.x * cRot - v.y * sRot,
+			v.x * sRot + v.y * cRot
+		};
+
+		v = shift + center;
+	}
 }
 
 void Polygon::render()
@@ -98,6 +120,40 @@ void Polygon::findCentroid(std::vector<Vertex> vertices)
 	center.y /= -(6.0 * signedArea);
 
 	this->center = center;
+}
+
+void Polygon::getRotationalInertia()
+{
+	float j_x = 0, j_y = 0;
+
+
+	for (int v = 0; v < vertices.size() - 1; v++)
+	{
+		int vpp = v + 1;
+		// (x_i * y_i+1 - x_i+1 * y_i)
+		float leftTerm =
+			vertices[v].x * vertices[vpp].y - vertices[vpp].x * vertices[v].y;
+
+		// (y_i^2 + y_i * y_i+1 + y_i+1^2)
+		float rightTerm =
+			pow(vertices[v].y, 2) + vertices[v].y * vertices[vpp].y + pow(vertices[vpp].y, 2);
+
+		j_x += leftTerm + rightTerm;
+		j_y += leftTerm;
+
+		// (x_i^2 + x_i * x_i+1 + x_i+1^2)
+		rightTerm = 
+			pow(vertices[v].x, 2) + vertices[v].x * vertices[vpp].x + pow(vertices[vpp].x, 2);
+
+		j_y += rightTerm;
+
+	}
+
+	float oneTwelfth = 1.0f / 12.0f;
+	j_x *= oneTwelfth;
+	j_y *= oneTwelfth;
+
+	this->rot_inertia = (j_x + j_y) * mass;
 }
 
 void Polygon::shift(Vertex shift)

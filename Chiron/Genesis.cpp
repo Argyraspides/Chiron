@@ -2,7 +2,7 @@
 bool pause = false;
 int main()
 {
-	window.setFramerateLimit(60);
+	window.setFramerateLimit(180);
 	runEngine();
 }
 

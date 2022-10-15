@@ -22,7 +22,7 @@ void   Engine::run(std::vector<Polygon>& polygons)
 		{
 			for (int x = y + 1; x < polygons.size(); x++)
 			{
-				if (GJK(polygons[y], polygons[x]))
+				if (collision_GJK(polygons[y], polygons[x]))
 				{
 					// Determines if p1's vertex collided with p2's edge, or vice versa.
 					// If there was an edge-edge collision, it doesn't matter whether this is
@@ -34,9 +34,6 @@ void   Engine::run(std::vector<Polygon>& polygons)
 
 					separatePolygons(polygons[y], polygons[x], collisionPoint, origin);
 					processCollision_ang(polygons[y], polygons[x], collisionPoint, n);
-					
-					polygons[x].shift((polygons[x].center - polygons[y].center).normalized());
-
 				}
 			}
 		}
@@ -162,7 +159,7 @@ Vertex Engine::getCollisionNormal(Polygon& p1, Polygon& p2, Vertex& collisionPoi
 
 }
 
-bool   Engine::HST(Polygon& p1, Polygon& p2)
+bool   Engine::collision_HST_SAT(Polygon& p1, Polygon& p2)
 {
 	Polygon* s1 = &p1;
 	Polygon* s2 = &p2;
@@ -251,7 +248,7 @@ bool   Engine::HST(Polygon& p1, Polygon& p2)
 	return true;
 }
 
-bool   Engine::GJK(Polygon& p1, Polygon& p2)
+bool   Engine::collision_GJK(Polygon& p1, Polygon& p2)
 {
 	Vertex collisionPoint;
 	Vertex directionVector = { 1,1 };
@@ -396,7 +393,6 @@ void   Engine::processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionP
 	// Impulse formula for rotational collisions
 	j =
 		(
-
 			n.dotProduct((v_bp - v_ap) * -(1.0 + e)))
 		/
 
@@ -404,19 +400,19 @@ void   Engine::processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionP
 
 			(n.dotProduct(n) * (1.0 / p1.mass + 1.0 / p2.mass))
 			+
-			pow((r_ap.dotProduct(n)), 2) / TEMP_INERTIA
+			pow((r_ap.dotProduct(n)), 2) / p1.rot_inertia
 			+
-			pow((r_bp.dotProduct(n)), 2) / TEMP_INERTIA
+			pow((r_bp.dotProduct(n)), 2) / p2.rot_inertia
 
-			);
+		);
 
 	// Final collision response.
 
 	p1.vel = p1.vel + n * ((j) / p1.mass);
 	p2.vel = p2.vel + n * ((-j) / p2.mass);
 
-	p1.ang_vel = p1.ang_vel + r_ap.dotProduct((n * ((j) / TEMP_INERTIA)));
-	p2.ang_vel = p2.ang_vel + r_bp.dotProduct((n * ((-j) / TEMP_INERTIA)));
+	p1.ang_vel = p1.ang_vel + r_ap.dotProduct((n * ((j) / p1.rot_inertia)));
+	p2.ang_vel = p2.ang_vel + r_bp.dotProduct((n * ((-j) / p2.rot_inertia)));
 }
 
 void   Engine::separatePolygons(Polygon& p1, Polygon& p2, Vertex& collisionPoint, bool& origin)

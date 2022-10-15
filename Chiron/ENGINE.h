@@ -23,13 +23,13 @@ public:
 	};
 
 	// Hyperplane separation theorem algorithm
-	bool HST(Polygon& p1, Polygon& p2);
+	bool collision_HST_SAT(Polygon& p1, Polygon& p2);
 	// Processing Translational-only collision
 	void processCollision      (Polygon& p1, Polygon& p2);
 	void processCollision_ang(Polygon& p1, Polygon& p2, Vertex& collisionPoint, Vertex& n);
 
 	// Gilbert-Johnathan-Keerthi Algorithm
-	bool GJK(Polygon& a1, Polygon& a2);
+	bool collision_GJK(Polygon& a1, Polygon& a2);
 	// Retrieves the support point for the GJK algorithm
 	Vertex support(Polygon& a1, Polygon& a2, Vertex& vector);
 	// Checks if the current triangle, or "simplex" contains the origin.
