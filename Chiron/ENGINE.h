@@ -5,7 +5,6 @@
 
 #define SCREEN_WIDTH 1366
 #define SCREEN_HEIGHT 768
-#define TEMP_INERTIA 45000
 
 class Engine
 {
@@ -32,7 +31,7 @@ public:
 	bool collision_GJK(Polygon& a1, Polygon& a2);
 	// Retrieves the support point for the GJK algorithm
 	Vertex support(Polygon& a1, Polygon& a2, Vertex& vector);
-	// Checks if the current triangle, or "simplex" contains the origin.
+	// Checks if the current triangle, or "simplex", contains the origin.
 	bool checkTriangle(std::vector<Vertex>& triangle, Vertex& direction);
 
 	/* 
@@ -40,9 +39,9 @@ public:
      * Sets the 'flip' vertex to be whatever velocity component needs
 	 * to be flipped (e.g. when the polygon hits the top or bottom wall, the y velocity is flipped)
 	*/
-	bool collidesWithWall      (Polygon& p1, Vertex &flip);
+	bool collidesWithWall      (Polygon& p1, Vertex& collisionPoint, Vertex& flip);
 	// Flips the appropriate velocity vector.
-	void processWallCollision  (Polygon& p1, Vertex &flip);
+	void processWallCollision  (Polygon& p1, Vertex& collisionPoint, Vertex& flip);
 
 	// Updates and renders all shapes, compares pairs to evaluate collision 
 	void run(std::vector<Polygon> &polygons);

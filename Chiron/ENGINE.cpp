@@ -9,10 +9,10 @@ void   Engine::run(std::vector<Polygon>& polygons)
 	{
 		p.update();
 		p.render();
-
-		if (collidesWithWall(p, flip))
+		Vertex wallColPt;
+		if (collidesWithWall(p, flip, wallColPt))
 		{
-			processWallCollision(p, flip);
+			processWallCollision(p, flip, wallColPt);
 		}
 	}
 
@@ -519,12 +519,14 @@ void   Engine::separatePolygons(Polygon& p1, Polygon& p2, Vertex& collisionPoint
 	}
 }
 
-void   Engine::processWallCollision(Polygon& p1, Vertex& flip)
+void   Engine::processWallCollision(Polygon& p1, Vertex &collisionPoint,Vertex& flip)
 {
 	p1.vel = p1.vel * flip;
+	p1.ang_vel = (collisionPoint.x * p1.vel.y - collisionPoint.y * p1.vel.x) / 
+		(collisionPoint.x * collisionPoint.x + collisionPoint.y * collisionPoint.y);
 }
 
-bool   Engine::collidesWithWall(Polygon& p1, Vertex& flip)
+bool   Engine::collidesWithWall(Polygon& p1, Vertex &collisionPoint ,Vertex& flip)
 {
 	// TODO: Optimization step: define all shapes with the largest possible "bounding" box. If this box isn't 
 	// colliding with the edge, then just return false.
@@ -562,6 +564,7 @@ bool   Engine::collidesWithWall(Polygon& p1, Vertex& flip)
 		*  DIDN'T invert) will be set to 0.
 		*/
 
+		collisionPoint = p1.vertices[furthestPointIndex];
 
 		// (2)
 		switch (i)

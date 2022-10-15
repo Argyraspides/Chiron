@@ -124,8 +124,11 @@ void Polygon::findCentroid(std::vector<Vertex> vertices)
 
 void Polygon::getRotationalInertia()
 {
-	float j_x = 0, j_y = 0;
 
+	// The formula for the second moment of inertia for an arbitrary polygon can be found here:
+	// https://en.wikipedia.org/wiki/Second_moment_of_area 
+
+	float j_x = 0, j_y = 0;
 
 	for (int v = 0; v < vertices.size() - 1; v++)
 	{
