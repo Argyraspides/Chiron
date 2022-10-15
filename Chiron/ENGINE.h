@@ -11,7 +11,7 @@ class Engine
 public:
 	Engine() = default;
 
-	float collisionCount = 0;
+	float totalSystemEnergy = 0;
 
 	std::vector<Vertex> wallVecs =
 	{
@@ -40,6 +40,7 @@ public:
 	 * to be flipped (e.g. when the polygon hits the top or bottom wall, the y velocity is flipped)
 	*/
 	bool collidesWithWall      (Polygon& p1, Vertex& collisionPoint, Vertex& flip);
+	void updateEnergy(std::vector<Polygon>& polygons);
 	// Flips the appropriate velocity vector.
 	void processWallCollision  (Polygon& p1, Vertex& collisionPoint, Vertex& flip);
 

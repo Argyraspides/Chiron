@@ -2,7 +2,7 @@
 bool pause = false;
 int main()
 {
-	window.setFramerateLimit(180);
+	window.setFramerateLimit(120);
 	runEngine();
 }
 
@@ -146,13 +146,16 @@ void makeShape()
 {
 	// We are done drawing our polygon. We will take the positions of all the
 	// dots on the screen and put them into vertices.
+
 	std::vector<Vertex> vertices(drawingPoints.size());
 	sf::ConvexShape convexShape;
 	// We must define these before actually giving our convexShape any features ...
 	// Thanks SFML.
+
 	convexShape.setFillColor(sf::Color(rand() * rand() * rand()));
 	convexShape.setPointCount(drawingPoints.size());
 	convexShape.setOutlineThickness(1.0f);
+
 	int i = -1;
 	for (sf::CircleShape& c : drawingPoints)
 	{
@@ -160,6 +163,7 @@ void makeShape()
 		vertices[++i] = v;
 		convexShape.setPoint(i, sf::Vector2f(v.x, v.y));
 	}
+
 	drawingPoints.clear();
 	Polygon poly(0, 0, 1, vertices);
 	poly.center.y *= -1;
@@ -169,10 +173,25 @@ void makeShape()
 	poly.vel = { x,  y };
 
 	poly.ang_vel = 0.01f;
+
+	float velMag = poly.vel.length();
+	float E_k = 0.5 * poly.mass * velMag * velMag;
+
+	// Rotational kinetic energy, Ek_rot = (1/2)Iw^2
+	float E_krot = 0.5 * poly.rot_inertia * poly.ang_vel * poly.ang_vel;
+
+	poly.og_energy = E_k + E_krot;
+	poly.energy = poly.og_energy;
+
+
 	convexShape.setOrigin(poly.center.x, poly.center.y);
 	convexShape.setPosition(poly.center.x, poly.center.y);
 	poly.renderedShape = convexShape;
 	polygons.push_back(poly);
+
+
+	engine.updateEnergy(polygons);
+
 }
 	
 

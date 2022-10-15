@@ -7,6 +7,8 @@ Polygon::Polygon(float xInit, float yInit, float mass, std::vector<Vertex> &vert
 	this->vertices = vertices;
 	findCentroid(vertices);
 	getRotationalInertia();
+
+	
 }
 
 void Polygon::update()

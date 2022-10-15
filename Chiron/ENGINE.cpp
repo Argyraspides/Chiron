@@ -1,10 +1,12 @@
 #include "ENGINE.h"
 
+
 void   Engine::run(std::vector<Polygon>& polygons)
 {
 	Vertex flip;
 
 	// Update, render, and check for any wall collisions
+	
 	for (Polygon& p : polygons)
 	{
 		p.update();
@@ -14,10 +16,18 @@ void   Engine::run(std::vector<Polygon>& polygons)
 		{
 			processWallCollision(p, flip, wallColPt);
 		}
+
+		if (p.energy / p.og_energy > 7.0f)
+		{
+			p.vel = p.vel * 0.3333f;
+			p.ang_vel *= 0.3333f;
+		}
 	}
+
 
 	if (polygons.size() > 1)
 	{
+		updateEnergy(polygons);
 		for (int y = 0; y < polygons.size() - 1; y++)
 		{
 			for (int x = y + 1; x < polygons.size(); x++)
@@ -34,6 +44,9 @@ void   Engine::run(std::vector<Polygon>& polygons)
 
 					separatePolygons(polygons[y], polygons[x], collisionPoint, origin);
 					processCollision_ang(polygons[y], polygons[x], collisionPoint, n);
+					// In case there are two points lodged inside, we do a second separation to remove that vertex as well
+					separatePolygons(polygons[y], polygons[x], collisionPoint, origin);
+
 				}
 			}
 		}
@@ -505,13 +518,10 @@ void   Engine::separatePolygons(Polygon& p1, Polygon& p2, Vertex& collisionPoint
 					float scaleFactor_m = vel_scale * vel_length;
 					scaleFactor_m = (scaleFactor_m < 1) ? (scaleFactor_m + 1) : (scaleFactor_m);
 
-					// 100% guarantee isn't enough. For a  200% guarantee, we also shift the other shape away by 
-					// the opposite vector. This means that our long term accuracy of the engine is slightly off, 
-					// but just fine for short term (think butterfly effect).
-					Vertex finalShift = shiftVertex * scaleFactor_m;
+					// We finally shift the shape away by the apppropriate amount
 
+					Vertex finalShift = shiftVertex * scaleFactor_m;
 					s1->shift(finalShift);
-					s2->shift(finalShift * -1);
 					return;
 				}
 			}
@@ -519,11 +529,15 @@ void   Engine::separatePolygons(Polygon& p1, Polygon& p2, Vertex& collisionPoint
 	}
 }
 
-void   Engine::processWallCollision(Polygon& p1, Vertex &collisionPoint,Vertex& flip)
+void   Engine::processWallCollision(Polygon& p1, Vertex &collisionPoint, Vertex& flip)
 {
+
+	// We will assume the wall absorbs no energy from the impact.
 	p1.vel = p1.vel * flip;
-	p1.ang_vel = (collisionPoint.x * p1.vel.y - collisionPoint.y * p1.vel.x) / 
-		(collisionPoint.x * collisionPoint.x + collisionPoint.y * collisionPoint.y);
+	// Collision arm (vector pointing from center of polygon to the collisionPoint
+	Vertex r_pc = collisionPoint - p1.center;
+	p1.ang_vel = (r_pc.x * p1.vel.y - r_pc.y * p1.vel.x) / 
+		(r_pc.x * r_pc.x + r_pc.y * r_pc.y);
 }
 
 bool   Engine::collidesWithWall(Polygon& p1, Vertex &collisionPoint ,Vertex& flip)
@@ -608,6 +622,25 @@ bool   Engine::collidesWithWall(Polygon& p1, Vertex &collisionPoint ,Vertex& fli
 	}
 	return false;
 }
+
+void   Engine::updateEnergy(std::vector<Polygon>& polygons)
+{
+	for (Polygon& p : polygons)
+	{
+		// Linear kinetic energy, Ek = (1/2)mv^2
+		float velMag = p.vel.length();
+		float E_k = 0.5 * p.mass * velMag * velMag;
+
+		// Rotational kinetic energy, Ek_rot = (1/2)Iw^2
+		float E_krot = 0.5 * p.rot_inertia * p.ang_vel * p.ang_vel;
+
+		p.energy =  E_k + E_krot;
+
+	}
+}
+
+
+
 
 
 

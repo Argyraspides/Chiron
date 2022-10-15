@@ -11,6 +11,7 @@ public:
 	Vertex shiftVec;
 	
 
+
 	std::vector<Vertex> vertices;
 
 	sf::ConvexShape renderedShape;
@@ -19,6 +20,8 @@ public:
 	float rot_inertia = 0;
 	float mass = 1;
 	float elasticity = 1;
+	float energy = 0;
+	float og_energy = 0;
 
 	void update();
 	void rotate();
